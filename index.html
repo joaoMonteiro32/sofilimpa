@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ff69b4">
+<title>Calculador de Orçamentos SOFILIMPA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .option-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input, .checkbox-group {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff1493;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        .noscript-warning {
+            color: red;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+
+    <link rel="manifest" href="manifest.json">
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(reg => console.log('Service Worker registado:', reg.scope))
+                .catch(err => console.log('Erro no Service Worker:', err));
+        });
+    }
+    </script>
+    </head>
+    
+<body>
+
+<noscript>
+    <div class="noscript-warning">Este site requer JavaScript para funcionar corretamente.</div>
+</noscript>
+
+<div class="container">
+    <h1>Calculador de Orçamentos SOFILIMPA</h1>
+
+    <div class="option-group">
+        <label>Escolha os serviços:</label>
+        <div class="checkbox-group" id="checkboxes">
+            <label><input type="checkbox" name="servico" value="sofas"> Limpeza de Sofás</label>
+            <label><input type="checkbox" name="servico" value="cadeiras"> Limpeza de Cadeiras</label>
+            <label><input type="checkbox" name="servico" value="carpetes"> Limpeza de Carpetes</label>
+            <label><input type="checkbox" name="servico" value="colchoes"> Limpeza de Colchões</label>
+            <label><input type="checkbox" name="servico" value="estofosCarros"> Limpeza de Estofos de Carros</label>
+        </div>
+    </div>
+
+    <div class="option-group hidden" id="sofasGroup">
+        <label for="tipoSofa">Tipo de Sofá:</label>
+        <select id="tipoSofa">
+            <option value="1lugar">1 Lugar - €20</option>
+            <option value="2lugares">2 Lugares - €40</option>
+            <option value="3lugares">3 Lugares - €50</option>
+            <option value="2lugaresChaise">2 Lugares com Chaise Longue - €55</option>
+            <option value="3lugaresChaise">3 Lugares com Chaise Longue - €70</option>
+        </select>
+    </div>
+
+    <div class="option-group hidden" id="cadeirasGroup">
+        <label for="quantidadeCadeiras">Quantidade de Cadeiras:</label>
+        <input type="number" id="quantidadeCadeiras" value="1" min="1">
+    </div>
+
+    <div class="option-group hidden" id="carpetesGroup">
+        <label for="quantidadeCarpetes">Quantidade de Carpetes:</label>
+        <input type="number" id="quantidadeCarpetes" value="1" min="1">
+        <label for="metrosCarpetes">Metros Quadrados por Carpete:</label>
+        <input type="number" id="metrosCarpetes" value="0" min="1">
+    </div>
+
+    <div class="option-group hidden" id="colchoesGroup">
+        <label for="tipoColchao">Tipo de Colchão:</label>
+        <select id="tipoColchao">
+            <option value="infantoJuvenil">Infanto juvenil - €20</option>
+            <option value="solteiro">Cama de solteiro - €25</option>
+            <option value="casal">Cama de casal - €40</option>
+        </select>
+    </div>
+
+    <div class="option-group hidden" id="estofosCarrosGroup">
+        <label for="tipoCarro">Tipo de Veículo:</label>
+        <select id="tipoCarro">
+            <option value="carro">Carro - €30</option>
+            <option value="carrinha">Carrinha - €20</option>
+        </select>
+    </div>
+
+    <button onclick="calcularOrcamento()">Calcular Orçamento</button>
+
+    <div class="result" id="resultado"></div>
+</div>
+
+<script>
+    function mostrarCampos() {
+        const checkboxes = document.querySelectorAll('input[name="servico"]:checked');
+        const selecionados = Array.from(checkboxes).map(cb => cb.value);
+
+        const grupos = {
+            'sofas': 'sofasGroup',
+            'cadeiras': 'cadeirasGroup',
+            'carpetes': 'carpetesGroup',
+            'colchoes': 'colchoesGroup',
+            'estofosCarros': 'estofosCarrosGroup'
+        };
+
+        for (let grupo in grupos) {
+            document.getElementById(grupos[grupo]).classList.add('hidden');
+        }
+
+        selecionados.forEach(servico => {
+            document.getElementById(grupos[servico]).classList.remove('hidden');
+        });
+    }
+
+    function calcularOrcamento() {
+        const checkboxes = document.querySelectorAll('input[name="servico"]:checked');
+        const selecionados = Array.from(checkboxes).map(cb => cb.value);
+        let total = 0;
+
+        selecionados.forEach(servico => {
+            switch (servico) {
+                case 'sofas':
+                    const tipoSofa = document.getElementById('tipoSofa').value;
+                    switch (tipoSofa) {
+                        case '1lugar': total += 20; break;
+                        case '2lugares': total += 40; break;
+                        case '3lugares': total += 50; break;
+                        case '2lugaresChaise': total += 55; break;
+                        case '3lugaresChaise': total += 70; break;
+                    }
+                    break;
+                case 'cadeiras':
+                    const quantidadeCadeiras = parseInt(document.getElementById('quantidadeCadeiras').value);
+                    total += 8.5 * quantidadeCadeiras;
+                    break;
+                case 'carpetes':
+                    const quantidadeCarpetes = parseInt(document.getElementById('quantidadeCarpetes').value);
+                    const metrosCarpetes = parseInt(document.getElementById('metrosCarpetes').value);
+                    total += 6 * metrosCarpetes * quantidadeCarpetes;
+                    break;
+                case 'colchoes':
+                    const tipoColchao = document.getElementById('tipoColchao').value;
+                    switch (tipoColchao) {
+                        case 'infantoJuvenil': total += 20; break;
+                        case 'solteiro': total += 25; break;
+                        case 'casal': total += 40; break;
+                    }
+                    break;
+                case 'estofosCarros':
+                    const tipoCarro = document.getElementById('tipoCarro').value;
+                    total += (tipoCarro === 'carro') ? 30 : 20;
+                    break;
+            }
+        });
+
+        document.getElementById('resultado').innerText = `O orçamento final é: €${total.toFixed(2)}`;
+    }
+
+    // Garantir compatibilidade com iPhone: escutar clicks diretamente
+    document.getElementById('checkboxes').addEventListener('click', mostrarCampos);
+</script>
+
+</body>
+</html>
