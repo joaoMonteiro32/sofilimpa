@@ -1,119 +1,215 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#ff4081" />
-  <link rel="manifest" href="manifest.json" />
-  <title>Calculadora SOFILIMPA</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    body {
-      background-color: #f2f2f2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .card {
-      background-color: #fff;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      max-width: 420px;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    h2 {
-      font-size: 1rem;
-      font-weight: 500;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1rem;
-      padding: 8px 0;
-    }
-
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-    }
-
-    button {
-      background-color: #ff4081;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 16px;
-      transition: background 0.2s ease-in-out;
-    }
-
-    button:hover {
-      background-color: #e73370;
-    }
-
-    .resultado {
-      text-align: center;
-      margin-top: 16px;
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculador de Orçamentos SOFILIMPA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .option-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #ff69b4; /* Cor rosa */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff1493; /* Rosa mais escuro */
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Calculador de Orçamentos</h1>
-    <h2>SOFILIMPA</h2>
 
-    <div class="form-group">
-      <label><input type="checkbox" value="25"> Limpeza de Sofás</label>
-      <label><input type="checkbox" value="10"> Limpeza de Cadeiras</label>
-      <label><input type="checkbox" value="15"> Limpeza de Carpetes</label>
-      <label><input type="checkbox" value="20"> Limpeza de Colchões</label>
-      <label><input type="checkbox" value="30"> Limpeza de Estofos de Carros</label>
+    <div class="container">
+        <h1>Calculador de Orçamentos SOFILIMPA</h1>
+
+        <div class="option-group">
+            <label for="servico">Escolha os serviços:</label>
+            <select id="servicos" multiple onchange="mostrarCampos()">
+                <option value="sofas">Limpeza de Sofás</option>
+                <option value="cadeiras">Limpeza de Cadeiras</option>
+                <option value="carpetes">Limpeza de Carpetes</option>
+                <option value="colchoes">Limpeza de Colchões</option>
+                <option value="estofosCarros">Limpeza de Estofos de Carros</option>
+            </select>
+        </div>
+
+        <div class="option-group hidden" id="sofasGroup">
+            <label for="tipoSofa">Tipo de Sofá:</label>
+            <select id="tipoSofa">
+                <option value="1lugar">1 Lugar - €20</option>
+                <option value="2lugares">2 Lugares - €40</option>
+                <option value="3lugares">3 Lugares - €50</option>
+                <option value="2lugaresChaise">2 Lugares com Chaise Longue - €55</option>
+                <option value="3lugaresChaise">3 Lugares com Chaise Longue - €70</option>
+            </select>
+        </div>
+
+        <div class="option-group hidden" id="cadeirasGroup">
+            <label for="quantidadeCadeiras">Quantidade de Cadeiras:</label>
+            <input type="number" id="quantidadeCadeiras" value="1" min="1">
+        </div>
+
+        <div class="option-group hidden" id="carpetesGroup">
+            <label for="quantidadeCarpetes">Quantidade de Carpetes:</label>
+            <input type="number" id="quantidadeCarpetes" value="1" min="1">
+            <label for="metrosCarpetes">Metros Quadrados por Carpete:</label>
+            <input type="number" id="metrosCarpetes" value="0" min="1">
+        </div>
+
+        <div class="option-group hidden" id="colchoesGroup">
+            <label for="tipoColchao">Tipo de Colchão:</label>
+            <select id="tipoColchao">
+                <option value="infantoJuvenil">Infanto juvenil - €20</option>
+                <option value="solteiro">Cama de solteiro - €25</option>
+                <option value="casal">Cama de casal - €40</option>
+            </select>
+        </div>
+
+        <div class="option-group hidden" id="estofosCarrosGroup">
+            <label for="tipoCarro">Tipo de Veículo:</label>
+            <select id="tipoCarro">
+                <option value="carro">Carro - €30</option>
+                <option value="carrinha">Carrinha - €20</option>
+            </select>
+        </div>
+
+        <button onclick="calcularOrcamento()">Calcular Orçamento</button>
+
+        <div class="result" id="resultado">
+            <!-- O orçamento final será exibido aqui -->
+        </div>
     </div>
 
-    <button onclick="calcular()">Calcular Orçamento</button>
-    <div class="resultado" id="resultado">O orçamento final é: €0.00</div>
-  </div>
+    <script>
+        function mostrarCampos() {
+            const servicosSelecionados = Array.from(document.getElementById('servicos').selectedOptions).map(option => option.value);
 
-  <script>
-    function calcular() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      let total = 0;
-      checkboxes.forEach(c => {
-        if (c.checked) total += parseFloat(c.value);
-      });
-      document.getElementById("resultado").innerText = "O orçamento final é: €" + total.toFixed(2);
-    }
-  </script>
+            const grupos = {
+                'sofas': 'sofasGroup',
+                'cadeiras': 'cadeirasGroup',
+                'carpetes': 'carpetesGroup',
+                'colchoes': 'colchoesGroup',
+                'estofosCarros': 'estofosCarrosGroup'
+            };
+
+            // Esconde todos os grupos
+            for (let grupo in grupos) {
+                document.getElementById(grupos[grupo]).classList.add('hidden');
+            }
+
+            // Mostra apenas os campos selecionados
+            servicosSelecionados.forEach(servico => {
+                document.getElementById(grupos[servico]).classList.remove('hidden');
+            });
+        }
+
+        function calcularOrcamento() {
+            const servicosSelecionados = Array.from(document.getElementById('servicos').selectedOptions).map(option => option.value);
+            let total = 0;
+
+            servicosSelecionados.forEach(servico => {
+                switch (servico) {
+                    case 'sofas':
+                        const tipoSofa = document.getElementById('tipoSofa').value;
+                        switch (tipoSofa) {
+                            case '1lugar':
+                                total += 20; // Preço para sofá de 1 lugar
+                                break;
+                            case '2lugares':
+                                total += 40; // Preço para sofá de 2 lugares
+                                break;
+                            case '3lugares':
+                                total += 50; // Preço para sofá de 3 lugares
+                                break;
+                            case '2lugaresChaise':
+                                total += 55; // Preço para sofá de 2 lugares com chaise longue
+                                break;
+                            case '3lugaresChaise':
+                                total += 70; // Preço para sofá de 3 lugares com chaise longue
+                                break;
+                        }
+                        break;
+                    case 'cadeiras':
+                        const quantidadeCadeiras = parseInt(document.getElementById('quantidadeCadeiras').value);
+                        total += 8.50 * quantidadeCadeiras; // Preço por cadeira
+                        break;
+                    case 'carpetes':
+                        const quantidadeCarpetes = parseInt(document.getElementById('quantidadeCarpetes').value);
+                        const metrosCarpetes = parseInt(document.getElementById('metrosCarpetes').value);
+                        total += 6 * metrosCarpetes * quantidadeCarpetes; // Preço por metro quadrado de carpete
+                        break;
+                    case 'colchoes':
+                        const tipoColchao = document.getElementById('tipoColchao').value;
+                        switch (tipoColchao) {
+                            case 'infantoJuvenil':
+                                total += 20; // Preço para colchão infanto juvenil
+                                break;
+                            case 'solteiro':
+                                total += 25; // Preço para colchão de solteiro
+                                break;
+                            case 'casal':
+                                total += 40; // Preço para colchão de casal
+                                break;
+                        }
+                        break;
+                    case 'estofosCarros':
+                        const tipoCarro = document.getElementById('tipoCarro').value;
+                        if (tipoCarro === 'carro') {
+                            total += 30; // Preço para carro
+                        } else if (tipoCarro === 'carrinha') {
+                            total += 20; // Preço para carrinha
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            document.getElementById('resultado').innerText = `O orçamento final é: €${total.toFixed(2)}`;
+        }
+    </script>
+
 </body>
 </html>
